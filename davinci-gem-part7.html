@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Final Quiz (Part 7)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #1a1a1a; display: flex; flex-direction: column; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #2c2c2c; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        .glassmorphic-panel { background: rgba(44, 44, 44, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .answer-btn { background-color: #374151; transition: all 0.2s ease-in-out; }
+        .answer-btn:hover:not(:disabled) { background-color: #4f46e5; }
+        .answer-btn.correct { background-color: #10B981; color: white; }
+        .answer-btn.incorrect { background-color: #EF4444; color: white; }
+    </style>
+</head>
+<body class="text-white">
+
+    <header class="p-4 text-center border-b border-gray-700 shadow-lg flex-shrink-0">
+        <h1 class="text-2xl md:text-3xl font-bold tracking-wider">The Final Quiz (Part 7)</h1>
+        <p class="text-sm md:text-base text-gray-400 mt-1">Test Your DaVinci Resolve Knowledge</p>
+        <div class="flex justify-center space-x-8 mt-2">
+            <a href="davinci-gem-part6.html" class="text-sm text-blue-400 hover:text-blue-300 transition-colors"><strong class="font-semibold">← Go back to Part 6</strong></a>
+        </div>
+    </header>
+
+    <main class="flex-grow p-4 md:p-6 overflow-y-auto flex items-center justify-center">
+        <div id="quiz-container" class="w-full max-w-2xl mx-auto glassmorphic-panel rounded-2xl shadow-2xl p-8">
+            <!-- Quiz content will be injected here -->
+        </div>
+    </main>
+    
+    <script>
+        const quizData = [
+            // Part 1
+            { question: "Which page is for importing and organizing media?", answers: ["Edit Page", "Media Page", "Deliver Page", "Fusion Page"], correct: 1 },
+            { question: "The page designed for the fastest possible rough cut assembly is the:", answers: ["Edit Page", "Media Page", "Cut Page", "Fairlight Page"], correct: 2 },
+            // Part 2
+            { question: "How do you switch between pages using the keyboard?", answers: ["Ctrl + Number", "Alt + Number", "Shift + Number", "Cmd + Number"], correct: 2 },
+            { question: "To animate a clip's zoom over time, you need to use:", answers: ["Transitions", "Generators", "Keyframes", "Compound Clips"], correct: 2 },
+            { question: "Grouping multiple clips into one container on the timeline creates a:", answers: ["Bin", "Smart Bin", "Compound Clip", "Fused Clip"], correct: 2 },
+             // Part 3
+            { question: "Where do you find properties like 'Zoom' and 'Position' for a selected clip?", answers: ["Effects Library", "Inspector", "Media Pool", "Render Queue"], correct: 1 },
+            { question: "To create a simple colored background, you would use a:", answers: ["Transition", "Generator", "Codec", "Keyframe"], correct: 1 },
+            { question: "To scale up a graphic to fit the screen, you would adjust its...", answers: ["Position", "Rotation", "Zoom", "Opacity"], correct: 2 },
+            // Part 4
+            { question: "What is the fundamental logic of node-based systems?", answers: ["A flowchart where signal flows left to right", "A stack of layers from top to bottom", "A list of effects applied in order", "A bin of clips"], correct: 0 },
+            { question: "In the Fusion page, the Merge node's GREEN input is for the:", answers: ["Background", "Mask", "Effect", "Foreground"], correct: 3 },
+            // Part 5
+            { question: "In the Fairlight page, the main panel with volume faders is called the:", answers: ["Inspector", "Timeline", "Mixer", "Effects Library"], correct: 2 },
+            { question: "Which tool would you use to remove an unwanted low-frequency hum from a recording?", answers: ["Compressor", "Panner", "Equalizer (EQ)", "Reverb"], correct: 2 },
+            // Part 6
+            { question: "What is a 'Codec' in video terms?", answers: ["The file type, like .MP4", "A list of edits", "The method used to compress video data", "A type of color grade"], correct: 2 },
+            { question: "To export your final video, what is the very last step after adding your job to the queue?", answers: ["Click 'Render All'", "Click 'Start Render'", "Click 'Export Now'", "Click 'Finalize'"], correct: 0 },
+            { question: "For web sharing (like YouTube), which is the most common and efficient codec?", answers: ["ProRes 422", "H.264", "DNxHD", "Cinema DNG"], correct: 1 },
+        ];
+
+        const quizContainer = document.getElementById('quiz-container');
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        function showQuestion() {
+            if (currentQuestionIndex >= quizData.length) {
+                showResults();
+                return;
+            }
+
+            const questionData = quizData[currentQuestionIndex];
+            quizContainer.innerHTML = `
+                <div class="text-center mb-6">
+                    <p class="text-gray-400 text-sm">Question ${currentQuestionIndex + 1} of ${quizData.length}</p>
+                    <h2 class="text-xl md:text-2xl font-semibold mt-2">${questionData.question}</h2>
+                </div>
+                <div id="answers-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    ${questionData.answers.map((answer, index) => `
+                        <button class="answer-btn p-4 rounded-lg font-semibold" onclick="selectAnswer(${index})">${answer}</button>
+                    `).join('')}
+                </div>
+                <div id="feedback-container" class="mt-6 text-center"></div>
+            `;
+        }
+
+        function selectAnswer(selectedIndex) {
+            const questionData = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.answer-btn');
+            const feedbackContainer = document.getElementById('feedback-container');
+            
+            buttons.forEach(button => button.disabled = true);
+
+            if (selectedIndex === questionData.correct) {
+                score++;
+                buttons[selectedIndex].classList.add('correct');
+                feedbackContainer.innerHTML = `<p class="text-green-400 font-semibold">Correct!</p>`;
+            } else {
+                buttons[selectedIndex].classList.add('incorrect');
+                buttons[questionData.correct].classList.add('correct');
+                feedbackContainer.innerHTML = `<p class="text-red-400 font-semibold">Not quite. The correct answer is highlighted.</p>`;
+            }
+
+            feedbackContainer.innerHTML += `<button onclick="nextQuestion()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg">Next →</button>`;
+        }
+        
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+
+        function showResults() {
+            const percentage = Math.round((score / quizData.length) * 100);
+            let message = "";
+            let joeMessage = "";
+
+            if (score < 15) {
+                message = "Good start! Review the parts to strengthen your knowledge.";
+                joeMessage = `<p class="text-xs text-gray-500 mt-4 text-center">hmmmm... I'm afraid Joe may not be pleased with this.!</p>`;
+            } else {
+                message = "Excellent work! You have a solid understanding.";
+                joeMessage = `<p class="text-xs text-gray-500 mt-4 text-center">oh ok that's good!</p>`;
+            }
+
+            quizContainer.innerHTML = `
+                <div class="text-center">
+                    <h2 class="text-3xl font-bold mb-4">Quiz Complete!</h2>
+                    <p class="text-lg mb-2">Your Score:</p>
+                    <p class="text-5xl font-bold mb-4 text-blue-400">${score} / ${quizData.length}</p>
+                    <p class="text-2xl font-semibold mb-6">${percentage}%</p>
+                    <p class="text-gray-300 mb-6">${message}</p>
+                    <button onclick="restartQuiz()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg">Try Again</button>
+                    ${joeMessage}
+                </div>
+            `;
+        }
+        
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            showQuestion();
+        }
+
+        showQuestion();
+    </script>
+</body>
+</html>
+
+
