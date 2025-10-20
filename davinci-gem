@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting Started with DaVinci Resolve</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #1a1a1a; 
+            display: flex;
+            flex-direction: column;
+        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #2c2c2c; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #777; }
+        #page-navigation::-webkit-scrollbar { display: none; }
+        
+        .content-fade-in { animation: fadeIn 0.6s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .nav-btn.active { background-color: #3b82f6; color: white; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+        .nav-btn svg { transition: transform 0.2s ease-in-out; }
+        .nav-btn:hover svg { transform: scale(1.1); }
+        
+        .glassmorphic-panel {
+            background: rgba(44, 44, 44, 0.65);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .step-btn { background-color: #374151; }
+        .step-btn.active { background-color: #4f46e5; font-weight: 600; }
+        
+        .aspect-16-9 { aspect-ratio: 16 / 9; }
+    </style>
+</head>
+<body class="text-white">
+
+    <header class="p-4 text-center border-b border-gray-700 shadow-lg flex-shrink-0">
+        <h1 class="text-2xl md:text-3xl font-bold tracking-wider">Getting Started with DaVinci Resolve</h1>
+        <p class="text-sm md:text-base text-gray-400 mt-1">Following the Professional Workflow</p>
+        <a href="davinci_resolve_part2.html" class="text-sm text-blue-400 hover:text-blue-300 transition-colors mt-2 block">Ready for the next step? <strong class="font-semibold">Go to Part 2: The Editor's Toolkit →</strong></a>
+    </header>
+
+    <div class="flex-grow flex flex-col md:flex-row overflow-hidden">
+        <!-- Step Navigation Sidebar -->
+        <aside class="w-full md:w-64 bg-gray-800/30 p-4 overflow-y-auto border-r border-gray-700 flex-shrink-0">
+            <h2 id="steps-title" class="text-lg font-bold mb-4 text-blue-400"></h2>
+            <div id="steps-navigation" class="space-y-2"></div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow p-4 md:p-6 overflow-y-auto">
+            <div id="content-display" class="w-full max-w-7xl mx-auto">
+                <!-- Content will be injected here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Page Navigation Footer -->
+    <footer class="w-full p-2 bg-gray-900/50 border-t border-gray-700 flex-shrink-0">
+        <div id="page-navigation" class="flex items-center space-x-1 md:space-x-2 overflow-x-auto pb-2 -mb-2" style="-ms-overflow-style: none; scrollbar-width: none;"></div>
+    </footer>
+
+    <script>
+        const imageUrls = {
+            mediaPage: 'images/media-page.jpg',
+            cutPage: 'images/cut-page.jpg',
+            editPage: 'images/edit-page.jpg',
+            fusionPage: 'images/fusion-page.jpg',
+            colorPage: 'images/color-page.jpg',
+            fairlightPage: 'images/fairlight-page.jpg',
+            deliverPage: 'images/deliver-page.jpg',
+        };
+
+        const workflowData = {
+            workspace_overview: {
+                 title: "Overview",
+                 icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7h-9"></path><path d="M14 17H5"></path><path d="M17 12H5"></path><rect x="3" y="3" width="18" height="18" rx="2"></rect></svg>`,
+                 steps: [
+                    {
+                        title: "The 7 Pages of Resolve",
+                        description: "DaVinci Resolve 20's interface is organized into seven primary pages, which are specialized workspaces for different post-production tasks.",
+                        visual: `
+                            <div class="w-full h-full flex flex-col items-stretch justify-center text-left p-4 space-y-3 overflow-y-auto text-sm">
+                                <p class="bg-gray-800/50 p-3 rounded-md"><strong class="text-blue-400">Media Page:</strong> Use for importing, organizing, and managing media files.</p>
+                                <p class="bg-gray-800/50 p-3 rounded-md"><strong class="text-blue-400">Cut Page:</strong> A streamlined workspace for fast, rough editing.</p>
+                                <p class="bg-gray-800/50 p-3 rounded-md"><strong class="text-blue-400">Edit Page:</strong> A more comprehensive non-linear editing workspace with familiar timelines and tracks.</p>
+                                <p class="bg-gray-800/50 p-3 rounded-md"><strong class="text-blue-400">Fusion Page:</strong> Designed for creating visual effects and motion graphics.</p>
+                                <p class="bg-gray-800/50 p-3 rounded-md"><strong class="text-blue-400">Color Page:</strong> Dedicated to color correction and grading.</p>
+                                <p class="bg-gray-800/50 p-3 rounded-md"><strong class="text-blue-400">Fairlight Page:</strong> A full-featured workspace for audio post-production and mixing.</p>
+                                <p class="bg-gray-800/50 p-3 rounded-md"><strong class="text-blue-400">Deliver Page:</strong> Used for exporting your final project in various formats.</p>
+                            </div>
+                        `
+                    }
+                 ]
+            },
+            media: {
+                title: "Media",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>`,
+                steps: [
+                    {
+                        title: "Importing & Organizing",
+                        description: "The Media Page is your starting point for any project. Here you browse your computer's drives, preview clips, and add them to the Media Pool to organize them into bins.",
+                        visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden"><img src="${imageUrls.mediaPage}" class="w-full h-full object-contain" alt="DaVinci Resolve Media Page" onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/2d3748/e2e8f0?text=Media+Page';"></div>`
+                    }
+                ]
+            },
+            cut: {
+                title: "Cut",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 3.5L2 2m18 2L18.5 2.5M20 18l1.5 1.5M4 18l-1.5 1.5M20 6l-2.5-2.5M4 6l2.5-2.5M12 2v20M2 12h20"></path><circle cx="12" cy="12" r="2"></circle><path d="m18 12-2.5 2.5M12 18l-2.5-2.5M6 12l2.5-2.5M12 6l2.5 2.5"></path></svg>`,
+                steps: [
+                    {
+                        title: "Fast Assembly",
+                        description: "Designed for speed. The dual timeline lets you see your whole edit (top) and your active area (bottom) at once. Use 'Source Tape' mode to quickly scrub through all your clips.",
+                         visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden"><img src="${imageUrls.cutPage}" class="w-full h-full object-contain" alt="DaVinci Resolve Cut Page" onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/2d3748/e2e8f0?text=Cut+Page';"></div>`
+                    }
+                ]
+            },
+            edit: {
+                title: "Edit",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>`,
+                steps: [
+                    {
+                        title: "Precise Timeline Editing",
+                        description: "The Edit page offers a classic, highly precise workflow with multiple video and audio tracks. Use the Inspector on the right to transform clips, and the Effects library on the left for transitions.",
+                        visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden"><img src="${imageUrls.editPage}" class="w-full h-full object-contain" alt="DaVinci Resolve Edit Page" onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/2d3748/e2e8f0?text=Edit+Page';"></div>`
+                    }
+                ]
+            },
+            fusion: {
+                title: "Fusion",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z"></path><path d="M12 18v-6"></path><path d="m15 15-3-3-3 3"></path></svg>`,
+                steps: [
+                    {
+                        title: "Node-Based Compositing",
+                        description: "Create visual effects and motion graphics by connecting nodes. The flow starts with 'MediaIn' (your clip) and ends at 'MediaOut'. Each node in between is an effect or operation.",
+                        visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden"><img src="${imageUrls.fusionPage}" class="w-full h-full object-contain" alt="DaVinci Resolve Fusion Page" onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/2d3748/e2e8f0?text=Fusion+Page';"></div>`
+                    }
+                ]
+            },
+            color: {
+                title: "Color",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="4"></circle><line x1="21.17" y1="8" x2="12" y2="8"></line><line x1="3.95" y1="6.06" x2="8.54" y2="14"></line><line x1="10.88" y1="21.94" x2="15.46" y2="14"></line></svg>`,
+                steps: [
+                    {
+                        title: "Color Correction & Grading",
+                        description: "The Color Page is where you grade your film. It consists of the Viewer, the Node Editor for layering corrections, and a rich set of tools like Primary Wheels, Curves, and Scopes.",
+                        visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden"><img src="${imageUrls.colorPage}" class="w-full h-full object-contain" alt="DaVinci Resolve Color Page" onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/2d3748/e2e8f0?text=Color+Page';"></div>`
+                    }
+                ]
+            },
+            fairlight: {
+                title: "Fairlight",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M7 12h10"></path><path d="M12 7v10"></path></svg>`,
+                steps: [
+                    {
+                        title: "Audio Post-Production",
+                        description: "The Fairlight page is a full Digital Audio Workstation (DAW). It features a multi-track timeline and a professional mixer with EQ and dynamics for every channel.",
+                         visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden"><img src="${imageUrls.fairlightPage}" class="w-full h-full object-contain" alt="DaVinci Resolve Fairlight Page" onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/2d3748/e2e8f0?text=Fairlight+Page';"></div>`
+                    }
+                ]
+            },
+            deliver: {
+                title: "Deliver",
+                icon: `<svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 16.1A5 5 0 0 1 5.9 20M2 12.05A9 9 0 0 1 9.95 20M2 8a13 13 0 0 1 13-8c4.66 0 8.7 2.22 11 5.42M14 14l5-5-5-5"></path></svg>`,
+                steps: [
+                    {
+                        title: "Exporting Your Project",
+                        description: "Choose a preset (like YouTube or Vimeo) or select 'Custom Export' for full control. Name your file, choose a location, then click 'Add to Render Queue' and 'Render All'.",
+                        visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden"><img src="${imageUrls.deliverPage}" class="w-full h-full object-contain" alt="DaVinci Resolve Deliver Page" onerror="this.onerror=null;this.src='https://placehold.co/1920x1080/2d3748/e2e8f0?text=Deliver+Page';"></div>`
+                    }
+                ]
+            }
+        };
+
+        const contentDisplay = document.getElementById('content-display');
+        const pageNavigation = document.getElementById('page-navigation');
+        const stepsNavigation = document.getElementById('steps-navigation');
+        const stepsTitle = document.getElementById('steps-title');
+
+        let currentPageKey = 'workspace_overview';
+        let currentStepIndex = 0;
+
+        function updateStepContent() {
+            const page = workflowData[currentPageKey];
+            const step = page.steps[currentStepIndex];
+
+            contentDisplay.innerHTML = `
+                <div class="glassmorphic-panel rounded-2xl shadow-2xl p-6 transition-all duration-300 content-fade-in">
+                    <div class="w-full flex flex-col">
+                        <h3 class="text-xl md:text-2xl font-bold mb-2">${step.title}</h3>
+                        <div class="bg-gray-900/40 rounded-lg p-4 mb-4">
+                            <p class="text-gray-300 text-xs md:text-sm leading-relaxed">${step.description}</p>
+                        </div>
+                        <div class="bg-gray-900/40 rounded-lg relative overflow-hidden">${step.visual}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.querySelectorAll('.step-btn').forEach((btn, index) => {
+                btn.classList.toggle('active', index === currentStepIndex);
+            });
+        }
+
+        function updatePageContent(pageKey) {
+            currentPageKey = pageKey;
+            currentStepIndex = 0;
+            
+            const page = workflowData[pageKey];
+            stepsTitle.textContent = page.title;
+
+            stepsNavigation.innerHTML = '';
+            page.steps.forEach((step, index) => {
+                const button = document.createElement('button');
+                button.className = 'step-btn w-full text-left p-3 rounded-md text-sm transition-colors duration-200 hover:bg-indigo-500';
+                button.textContent = step.title;
+                button.onclick = () => {
+                    currentStepIndex = index;
+                    updateStepContent();
+                };
+                stepsNavigation.appendChild(button);
+            });
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.page === pageKey);
+            });
+
+            updateStepContent();
+        }
+
+        function initialize() {
+            const pageOrder = ['workspace_overview', 'media', 'cut', 'edit', 'fusion', 'color', 'fairlight', 'deliver'];
+            
+            pageOrder.forEach(key => {
+                const data = workflowData[key];
+                const button = document.createElement('button');
+                button.className = 'nav-btn flex-shrink-0 flex flex-col items-center justify-center p-2 md:px-4 md:py-2 rounded-lg bg-gray-800 hover:bg-blue-600 text-gray-300 hover:text-white transition-all duration-200 capitalize text-xs md:text-sm';
+                button.dataset.page = key;
+                button.innerHTML = `${data.icon}<span class="mt-1">${data.title.replace('_', ' ')}</span>`;
+                button.onclick = () => updatePageContent(key);
+                pageNavigation.appendChild(button);
+            });
+
+            updatePageContent('workspace_overview');
+        }
+
+        initialize();
+    </script>
+
+</body>
+</html>
+
+
