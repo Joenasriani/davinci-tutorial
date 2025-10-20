@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tools & Effects (Part 3)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #1a1a1a; display: flex; flex-direction: column; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #2c2c2c; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        .content-fade-in { animation: fadeIn 0.6s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .step-btn { background-color: #374151; }
+        .step-btn.active { background-color: #4f46e5; font-weight: 600; }
+        .glassmorphic-panel { background: rgba(44, 44, 44, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .aspect-16-9 { aspect-ratio: 16 / 9; }
+    </style>
+</head>
+<body class="text-white">
+
+    <header class="p-4 text-center border-b border-gray-700 shadow-lg flex-shrink-0">
+        <h1 class="text-2xl md:text-3xl font-bold tracking-wider">Tools & Effects (Part 3)</h1>
+        <p class="text-sm md:text-base text-gray-400 mt-1">Applying Transitions, Effects, and Generators</p>
+        <div class="flex justify-center space-x-8 mt-2">
+            <a href="davinci-gem-part2.html" class="text-sm text-blue-400 hover:text-blue-300 transition-colors"><strong class="font-semibold">← Go back to Part 2</strong></a>
+            <a href="davinci-gem-part4.html" class="text-sm text-blue-400 hover:text-blue-300 transition-colors"><strong class="font-semibold">Go to Part 4 →</strong></a>
+        </div>
+    </header>
+
+    <div class="flex-grow flex flex-col md:flex-row overflow-hidden">
+        <aside class="w-full md:w-64 bg-gray-800/30 p-4 overflow-y-auto border-r border-gray-700 flex-shrink-0">
+            <h2 id="steps-title" class="text-lg font-bold mb-4 text-blue-400">Tools & Effects</h2>
+            <div id="steps-navigation" class="space-y-2"></div>
+        </aside>
+        <main class="flex-grow p-4 md:p-6 overflow-y-auto">
+            <div id="content-display" class="w-full max-w-7xl mx-auto"></div>
+        </main>
+    </div>
+    
+    <script>
+        const tutorialData = {
+            inspector: {
+                title: "The Inspector",
+                description: "The Inspector is your primary tool for modifying any clip, title, or effect. Select an item on the timeline, and the Inspector will show all its adjustable properties, like position, color, and text content.",
+                visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden flex items-center justify-center"><div class="text-white">Placeholder for Inspector Screenshot</div></div>`
+            },
+            transitions: {
+                title: "Video Transitions",
+                description: "Smooth the cut between two clips using transitions. Find them in the 'Effects' library under 'Video Transitions'. Drag a transition (like a Cross Dissolve) directly onto the edit point between two clips.",
+                visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden flex items-center justify-center"><div class="text-white">Placeholder for Transitions Screenshot</div></div>`
+            },
+            open_fx: {
+                title: "Applying Open FX",
+                description: "Open FX are powerful plugins for creating visual effects. Find them in the 'Effects' library. Drag an effect like 'Glow' or 'Lens Flare' directly onto a clip to apply it. Adjust its parameters in the Inspector.",
+                visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden flex items-center justify-center"><div class="text-white">Placeholder for Open FX Screenshot</div></div>`
+            },
+            generators: {
+                title: "Using Generators",
+                description: "Generators create visual elements from scratch. Find them under 'Effects' > 'Generators'. Drag a 'Solid Color' or 'Gradient' to the timeline to create backgrounds or colored layers.",
+                visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden flex items-center justify-center"><div class="text-white">Placeholder for Generators Screenshot</div></div>`
+            }
+        };
+
+        const contentDisplay = document.getElementById('content-display');
+        const stepsNavigation = document.getElementById('steps-navigation');
+        let currentStepKey = 'inspector';
+
+        function updateContent(stepKey) {
+            currentStepKey = stepKey;
+            const step = tutorialData[stepKey];
+            contentDisplay.innerHTML = `
+                <div class="glassmorphic-panel rounded-2xl shadow-2xl p-6 transition-all duration-300 content-fade-in">
+                    <div class="w-full flex flex-col">
+                        <h3 class="text-xl md:text-2xl font-bold mb-2">${step.title}</h3>
+                        <div class="bg-gray-900/40 rounded-lg p-4 mb-4">
+                            <p class="text-gray-300 text-xs md:text-sm leading-relaxed">${step.description}</p>
+                        </div>
+                        <div class="bg-gray-900/40 rounded-lg relative overflow-hidden">${step.visual}</div>
+                    </div>
+                </div>`;
+            document.querySelectorAll('.step-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.step === stepKey));
+        }
+
+        function initialize() {
+            const stepOrder = ['inspector', 'transitions', 'open_fx', 'generators'];
+            stepOrder.forEach(key => {
+                const data = tutorialData[key];
+                const button = document.createElement('button');
+                button.className = 'step-btn w-full text-left p-3 rounded-md text-sm transition-colors duration-200 hover:bg-indigo-500';
+                button.dataset.step = key;
+                button.textContent = data.title;
+                button.onclick = () => updateContent(key);
+                stepsNavigation.appendChild(button);
+            });
+            updateContent('inspector');
+        }
+
+        initialize();
+    </script>
+</body>
+</html>
+
