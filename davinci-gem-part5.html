@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Nodes (Part 4)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #1a1a1a; display: flex; flex-direction: column; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #2c2c2c; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        .content-fade-in { animation: fadeIn 0.6s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .step-btn { background-color: #374151; }
+        .step-btn.active { background-color: #4f46e5; font-weight: 600; }
+        .glassmorphic-panel { background: rgba(44, 44, 44, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .aspect-16-9 { aspect-ratio: 16 / 9; }
+    </style>
+</head>
+<body class="text-white">
+
+    <header class="p-4 text-center border-b border-gray-700 shadow-lg flex-shrink-0">
+        <h1 class="text-2xl md:text-3xl font-bold tracking-wider">Understanding Nodes (Part 4)</h1>
+        <p class="text-sm md:text-base text-gray-400 mt-1">The Logic of Color and Fusion</p>
+        <div class="flex justify-center space-x-8 mt-2">
+            <a href="davinci-gem-part3.html" class="text-sm text-blue-400 hover:text-blue-300 transition-colors"><strong class="font-semibold">← Go back to Part 3</strong></a>
+        </div>
+    </header>
+
+    <div class="flex-grow flex flex-col md:flex-row overflow-hidden">
+        <aside class="w-full md:w-64 bg-gray-800/30 p-4 overflow-y-auto border-r border-gray-700 flex-shrink-0">
+            <h2 id="steps-title" class="text-lg font-bold mb-4 text-blue-400">Node Logic</h2>
+            <div id="steps-navigation" class="space-y-2"></div>
+        </aside>
+        <main class="flex-grow p-4 md:p-6 overflow-y-auto">
+            <div id="content-display" class="w-full max-w-7xl mx-auto"></div>
+        </main>
+    </div>
+    
+    <script>
+        const tutorialData = {
+            what_is_a_node: {
+                title: "What is a Node?",
+                description: "Think of nodes as a flowchart for your image. Unlike layers that stack on top of each other, nodes show the path your video signal travels. Each node is a separate instruction or effect. The signal flows from left to right, starting with your original clip and ending at the final output.",
+                visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden flex items-center justify-center p-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="text-center">
+                                    <div class="w-24 h-16 bg-blue-600 rounded flex items-center justify-center">MediaIn</div>
+                                    <div class="text-xs mt-1">Your Clip</div>
+                                </div>
+                                <div class="text-2xl text-yellow-400 font-mono">→</div>
+                                <div class="text-center">
+                                    <div class="w-24 h-16 bg-green-600 rounded flex items-center justify-center">Node 1<br>(Effect)</div>
+                                    <div class="text-xs mt-1">Instruction A</div>
+                                </div>
+                                <div class="text-2xl text-yellow-400 font-mono">→</div>
+                                <div class="text-center">
+                                    <div class="w-24 h-16 bg-green-600 rounded flex items-center justify-center">Node 2<br>(Effect)</div>
+                                    <div class="text-xs mt-1">Instruction B</div>
+                                </div>
+                                <div class="text-2xl text-yellow-400 font-mono">→</div>
+                                <div class="text-center">
+                                    <div class="w-24 h-16 bg-red-600 rounded flex items-center justify-center">MediaOut</div>
+                                    <div class="text-xs mt-1">Final Result</div>
+                                </div>
+                            </div>
+                         </div>`
+            },
+            serial_nodes: {
+                title: "Serial Nodes (Color)",
+                description: "This is the most common and fundamental node structure. The output of one node feeds directly into the input of the next. This creates a linear chain of operations, where each new node modifies the result of the previous one. To create one, right-click a node and select 'Add Node > Add Serial'.",
+                visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden flex flex-col items-center justify-center p-4">
+                            <div class="text-center font-bold mb-4">Logic: A → B → C</div>
+                            <p class="text-xs text-center mb-4">Use this to build your grade step-by-step. For example: Node 1 for basic balance, Node 2 for a secondary correction (like a window), and Node 3 for sharpening.</p>
+                            <div class="flex items-center space-x-2">
+                                <div class="w-20 h-12 bg-blue-500 rounded flex items-center justify-center text-xs">Source</div>
+                                <div class="text-xl text-gray-400">→</div>
+                                <div class="w-20 h-12 bg-green-500 rounded flex items-center justify-center text-xs">Balance</div>
+                                <div class="text-xl text-gray-400">→</div>
+                                <div class="w-20 h-12 bg-green-500 rounded flex items-center justify-center text-xs">Window</div>
+                                <div class="text-xl text-gray-400">→</div>
+                                <div class="w-20 h-12 bg-green-500 rounded flex items-center justify-center text-xs">Sharpen</div>
+                                <div class="text-xl text-gray-400">→</div>
+                                <div class="w-20 h-12 bg-red-500 rounded flex items-center justify-center text-xs">Output</div>
+                            </div>
+                        </div>`
+            },
+            parallel_nodes: {
+                title: "Parallel Nodes (Color)",
+                description: "A Parallel Mixer node allows you to branch your signal. It takes one input and splits it, letting you perform multiple, independent adjustments that are then combined back together. This prevents adjustments from contaminating each other. Create one with 'Add Node > Add Parallel'.",
+                visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden flex flex-col items-center justify-center p-4">
+                            <div class="text-center font-bold mb-4">Logic: A is split into B and C, then combined.</div>
+                            <p class="text-xs text-center mb-4">Perfect for when you want to isolate two different secondary corrections. For example, keying the blue sky and adding a window to a face, without the sky correction affecting the face correction.</p>
+                            <div class="flex items-center justify-center relative w-full h-32">
+                                <div class="absolute w-20 h-12 bg-blue-500 rounded flex items-center justify-center text-xs" style="left: 10%;">Source</div>
+                                <div class="absolute w-20 h-12 bg-green-500 rounded flex items-center justify-center text-xs" style="left: 40%; top: 0;">Sky Key</div>
+                                <div class="absolute w-20 h-12 bg-green-500 rounded flex items-center justify-center text-xs" style="left: 40%; bottom: 0;">Face Window</div>
+                                <div class="absolute w-20 h-12 bg-purple-500 rounded flex items-center justify-center text-xs" style="left: 70%;">Combine</div>
+                                <svg class="absolute w-full h-full" viewbox="0 0 100 50" preserveAspectRatio="none">
+                                    <line x1="22" y1="25" x2="38" y2="25" stroke="#6b7280" stroke-width="1"/>
+                                    <line x1="40" y1="25" x2="52" y2="10" stroke="#6b7280" stroke-width="1"/>
+                                    <line x1="40" y1="25" x2="52" y2="40" stroke="#6b7280" stroke-width="1"/>
+                                    <line x1="63" y1="10" x2="70" y2="25" stroke="#6b7280" stroke-width="1"/>
+                                    <line x1="63" y1="40" x2="70" y2="25" stroke="#6b7280" stroke-width="1"/>
+                                    <line x1="82" y1="25" x2="98" y2="25" stroke="#6b7280" stroke-width="1"/>
+                                </svg>
+                            </div>
+                        </div>`
+            },
+            merge_nodes: {
+                title: "Merge Nodes (Fusion)",
+                description: "The Merge node is the fundamental building block of Fusion. It layers one image on top of another. It has two main inputs: the Background (Yellow triangle) and the Foreground (Green triangle). The logic is simple: Green goes on top of Yellow.",
+                visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden flex flex-col items-center justify-center p-4">
+                            <div class="text-center font-bold mb-4">Logic: Green (Foreground) over Yellow (Background)</div>
+                            <p class="text-xs text-center mb-4">To connect, drag the output square (grey) of a node to the desired input triangle of the Merge node. The Background connection determines the resolution of the final composite.</p>
+                            <div class="flex items-center justify-center relative w-full h-32">
+                                <div class="absolute w-20 h-12 bg-blue-500 rounded flex items-center justify-center text-xs" style="left: 10%; top:0;">Text+</div>
+                                <div class="absolute w-20 h-12 bg-blue-500 rounded flex items-center justify-center text-xs" style="left: 10%; bottom:0;">Background</div>
+                                <div class="absolute w-20 h-12 bg-purple-500 rounded flex items-center justify-center text-xs" style="left: 45%;">Merge</div>
+                                <div class="absolute w-20 h-12 bg-red-500 rounded flex items-center justify-center text-xs" style="left: 80%;">Output</div>
+                                <svg class="absolute w-full h-full" viewbox="0 0 100 50" preserveAspectRatio="none">
+                                    <line x1="22" y1="10" x2="45" y2="10" stroke="#34D399" stroke-width="1.5" /> <!-- Green -->
+                                    <line x1="22" y1="40" x2="45" y2="40" stroke="#FBBF24" stroke-width="1.5" /> <!-- Yellow -->
+                                    <line x1="57" y1="25" x2="78" y2="25" stroke="white" stroke-width="1.5" />
+                                </svg>
+                            </div>
+                        </div>`
+            }
+        };
+
+        const contentDisplay = document.getElementById('content-display');
+        const stepsNavigation = document.getElementById('steps-navigation');
+        let currentStepKey = 'what_is_a_node';
+
+        function updateContent(stepKey) {
+            currentStepKey = stepKey;
+            const step = tutorialData[stepKey];
+            contentDisplay.innerHTML = `
+                <div class="glassmorphic-panel rounded-2xl shadow-2xl p-6 transition-all duration-300 content-fade-in">
+                    <div class="w-full flex flex-col">
+                        <h3 class="text-xl md:text-2xl font-bold mb-2">${step.title}</h3>
+                        <div class="bg-gray-900/40 rounded-lg p-4 mb-4">
+                            <p class="text-gray-300 text-xs md:text-sm leading-relaxed">${step.description}</p>
+                        </div>
+                        <div class="bg-gray-900/40 rounded-lg relative overflow-hidden">${step.visual}</div>
+                    </div>
+                </div>`;
+            document.querySelectorAll('.step-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.step === stepKey));
+        }
+
+        function initialize() {
+            const stepOrder = ['what_is_a_node', 'serial_nodes', 'parallel_nodes', 'merge_nodes'];
+            stepOrder.forEach(key => {
+                const data = tutorialData[key];
+                const button = document.createElement('button');
+                button.className = 'step-btn w-full text-left p-3 rounded-md text-sm transition-colors duration-200 hover:bg-indigo-500';
+                button.dataset.step = key;
+                button.textContent = data.title;
+                button.onclick = () => updateContent(key);
+                stepsNavigation.appendChild(button);
+            });
+            updateContent('what_is_a_node');
+        }
+
+        initialize();
+    </script>
+</body>
+</html>
+
+
