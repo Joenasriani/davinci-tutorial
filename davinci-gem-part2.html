@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Editor's Toolkit (Part 2)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body {
+            height: 100%;
+            overflow: hidden;
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #1a1a1a; 
+            display: flex;
+            flex-direction: column;
+        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #2c2c2c; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #777; }
+        
+        .content-fade-in { animation: fadeIn 0.6s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-btn { background-color: #374151; }
+        .step-btn.active { background-color: #4f46e5; font-weight: 600; }
+        
+        .glassmorphic-panel {
+            background: rgba(44, 44, 44, 0.65);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .aspect-16-9 { aspect-ratio: 16 / 9; }
+    </style>
+</head>
+<body class="text-white">
+
+    <header class="p-4 text-center border-b border-gray-700 shadow-lg flex-shrink-0">
+        <h1 class="text-2xl md:text-3xl font-bold tracking-wider">The Editor's Toolkit (Part 2)</h1>
+        <p class="text-sm md:text-base text-gray-400 mt-1">A Deep Dive into the Edit Page</p>
+        <a href="getting_started_with_davinci_resolve.html" class="text-sm text-blue-400 hover:text-blue-300 transition-colors mt-2 block"><strong class="font-semibold">← Go back to Part 1: Getting Started</strong></a>
+    </header>
+
+    <div class="flex-grow flex flex-col md:flex-row overflow-hidden">
+        <!-- Step Navigation Sidebar -->
+        <aside class="w-full md:w-64 bg-gray-800/30 p-4 overflow-y-auto border-r border-gray-700 flex-shrink-0">
+            <h2 id="steps-title" class="text-lg font-bold mb-4 text-blue-400">Edit Page Topics</h2>
+            <div id="steps-navigation" class="space-y-2"></div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow p-4 md:p-6 overflow-y-auto">
+            <div id="content-display" class="w-full max-w-7xl mx-auto">
+                <!-- Content will be injected here -->
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        const tutorialData = {
+            navigation: {
+                title: "Navigating Between Pages",
+                description: "Quickly switch between workspaces using the Page Navigation bar at the bottom, or use keyboard shortcuts for even faster access.",
+                visual: `
+                    <div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden p-4 text-center flex flex-col justify-center">
+                        <div class="font-bold mb-4">3 Ways to Switch Pages</div>
+                        <div class="space-y-4 text-sm md:text-base">
+                            <div class="bg-gray-700 p-3 rounded-md"><strong>1. Click the Icons:</strong> Use the navigation bar at the bottom of the screen.</div>
+                            <div class="bg-gray-700 p-3 rounded-md"><strong>2. Keyboard Shortcuts:</strong> Press Shift + [Number] (e.g., Shift+4 for Edit, Shift+5 for Fusion).</div>
+                            <div class="bg-gray-700 p-3 rounded-md"><strong>3. Top Menu:</strong> Go to Workspace > Switch to Page > [Page Name].</div>
+                        </div>
+                    </div>`
+            },
+            advanced_trimming: {
+                title: "Advanced Trimming",
+                description: "Master the different trim tools to edit with precision. Each tool affects the timeline in a unique way, saving you time and effort.",
+                visual: `
+                    <div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden p-4">
+                        <div class="text-center font-bold mb-4">Trim Tool Functions</div>
+                        <div class="grid grid-cols-2 gap-4 text-xs text-center">
+                            <div class="bg-gray-700 p-2 rounded"><strong>Ripple Edit:</strong> Shortens or lengthens a clip, pushing all subsequent clips forward or backward.</div>
+                            <div class="bg-gray-700 p-2 rounded"><strong>Roll Edit:</strong> Moves the edit point between two clips, making one longer and the other shorter.</div>
+                            <div class="bg-gray-700 p-2 rounded"><strong>Slip Edit:</strong> Changes the start and end frames of a clip without changing its duration or position on the timeline.</div>
+                            <div class="bg-gray-700 p-2 rounded"><strong>Slide Edit:</strong> Moves a clip earlier or later on the timeline, while trimming the adjacent clips to fill the gap.</div>
+                        </div>
+                    </div>`
+            },
+            keyframing_basics: {
+                title: "Keyframing Basics",
+                description: "Animate clip properties over time using keyframes in the Inspector. A keyframe marks a point in time where a property has a specific value (e.g., position, scale).",
+                visual: `
+                    <div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden p-4">
+                        <div class="text-center font-bold mb-4">Animating with Keyframes</div>
+                        <p class="text-center text-xs">1. Move playhead to start time → Click keyframe diamond (♦) in Inspector.<br>2. Move playhead to end time → Change the property's value (a new keyframe is added automatically).</p>
+                        <div class="mt-4 bg-gray-700 p-2 rounded h-3/4 flex items-center justify-center">Diagram showing Inspector panel with 'Zoom' property keyframed.</div>
+                    </div>`
+            },
+            working_with_titles: {
+                title: "Working with Titles",
+                description: "Add professional text to your video. Find the 'Text+' generator in the Effects library, drag it to the timeline above your video clip, and customize it in the Inspector.",
+                visual: `
+                    <div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden p-4 flex items-center justify-center">
+                       <div class="text-center">
+                           <div class="font-bold mb-2">Effects Library > Titles > Text+</div>
+                           <div class="text-3xl font-serif p-4 bg-white text-black rounded">Your Title Here</div>
+                           <div class="text-xs mt-2">Customize font, size, color, and more in the Inspector.</div>
+                       </div>
+                    </div>`
+            },
+            compound_clips: {
+                title: "Compound Clips",
+                description: "Organize your timeline by grouping multiple video and audio clips into a single 'Compound Clip'. Select clips, right-click, and choose 'New Compound Clip'.",
+                visual: `
+                    <div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden p-4 flex flex-col items-center justify-center">
+                        <div class="text-center font-bold mb-4">Creating a Compound Clip</div>
+                        <div class="flex space-x-1 mb-4">
+                            <div class="w-16 h-8 bg-blue-500 rounded"></div>
+                            <div class="w-12 h-8 bg-green-500 rounded"></div>
+                            <div class="w-20 h-8 bg-purple-500 rounded"></div>
+                        </div>
+                        <div class="text-2xl text-yellow-400">↓</div>
+                        <div class="w-48 h-10 bg-gray-600 rounded mt-4 flex items-center justify-center">Compound Clip</div>
+                    </div>`
+            }
+        };
+
+        const contentDisplay = document.getElementById('content-display');
+        const stepsNavigation = document.getElementById('steps-navigation');
+        let currentStepKey = 'navigation';
+
+        function updateContent(stepKey) {
+            currentStepKey = stepKey;
+            const step = tutorialData[stepKey];
+
+            contentDisplay.innerHTML = `
+                <div class="glassmorphic-panel rounded-2xl shadow-2xl p-6 transition-all duration-300 content-fade-in">
+                    <div class="w-full flex flex-col">
+                        <h3 class="text-xl md:text-2xl font-bold mb-2">${step.title}</h3>
+                        <div class="bg-gray-900/40 rounded-lg p-4 mb-4">
+                            <p class="text-gray-300 text-xs md:text-sm leading-relaxed">${step.description}</p>
+                        </div>
+                        <div class="bg-gray-900/40 rounded-lg relative overflow-hidden">${step.visual}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.querySelectorAll('.step-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.step === stepKey);
+            });
+        }
+
+        function initialize() {
+            const stepOrder = ['navigation', 'advanced_trimming', 'keyframing_basics', 'working_with_titles', 'compound_clips'];
+            
+            stepOrder.forEach(key => {
+                const data = tutorialData[key];
+                const button = document.createElement('button');
+                button.className = 'step-btn w-full text-left p-3 rounded-md text-sm transition-colors duration-200 hover:bg-indigo-500';
+                button.dataset.step = key;
+                button.textContent = data.title;
+                button.onclick = () => updateContent(key);
+                stepsNavigation.appendChild(button);
+            });
+
+            updateContent('navigation');
+        }
+
+        initialize();
+    </script>
+
+</body>
+</html>
+
+
