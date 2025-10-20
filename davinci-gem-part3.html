@@ -17,7 +17,17 @@
         .step-btn { background-color: #374151; }
         .step-btn.active { background-color: #4f46e5; font-weight: 600; }
         .glassmorphic-panel { background: rgba(44, 44, 44, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .aspect-16-9 { aspect-ratio: 16 / 9; }
+        
+        .visual-container {
+            min-height: 300px;
+            overflow: auto;
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .visual-container {
+                min-height: 0;
+                aspect-ratio: 16 / 9;
+            }
+        }
     </style>
 </head>
 <body class="text-white">
@@ -46,22 +56,35 @@
             inspector: {
                 title: "The Inspector",
                 description: "The Inspector is your primary tool for modifying any clip, title, or effect. Select an item on the timeline, and the Inspector will show all its adjustable properties, like position, color, and text content.",
-                visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden flex items-center justify-center"><div class="text-white">Placeholder for Inspector Screenshot</div></div>`
+                visual: `<div class="w-full relative bg-black rounded-lg flex items-center justify-center visual-container"><div class="text-white">Placeholder for Inspector Screenshot</div></div>`
+            },
+            scaling_positioning: {
+                title: "Scaling & Positioning",
+                description: "Easily resize and reposition your clips using the Transform controls in the Inspector. Use 'Zoom' to scale up your footage and 'Position' to reframe your shot within the viewer.",
+                visual: `<div class="w-full relative bg-black rounded-lg flex items-center justify-center p-4 visual-container">
+                            <div class="text-center">
+                                <p class="mb-4 font-semibold">Inspector > Transform</p>
+                                <div class="w-64 h-36 border-2 border-dashed border-gray-500 rounded-lg flex items-center justify-center">
+                                    <div class="w-32 h-20 bg-blue-500 rounded-lg flex items-center justify-center text-xs">Your Clip</div>
+                                </div>
+                                <p class="mt-4 text-xs">Use the 'Zoom' value to make the clip bigger or smaller, and the 'Position X & Y' values to move it around.</p>
+                            </div>
+                         </div>`
             },
             transitions: {
                 title: "Video Transitions",
                 description: "Smooth the cut between two clips using transitions. Find them in the 'Effects' library under 'Video Transitions'. Drag a transition (like a Cross Dissolve) directly onto the edit point between two clips.",
-                visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden flex items-center justify-center"><div class="text-white">Placeholder for Transitions Screenshot</div></div>`
+                visual: `<div class="w-full relative bg-black rounded-lg flex items-center justify-center visual-container"><div class="text-white">Placeholder for Transitions Screenshot</div></div>`
             },
             open_fx: {
                 title: "Applying Open FX",
                 description: "Open FX are powerful plugins for creating visual effects. Find them in the 'Effects' library. Drag an effect like 'Glow' or 'Lens Flare' directly onto a clip to apply it. Adjust its parameters in the Inspector.",
-                visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden flex items-center justify-center"><div class="text-white">Placeholder for Open FX Screenshot</div></div>`
+                visual: `<div class="w-full relative bg-black rounded-lg flex items-center justify-center visual-container"><div class="text-white">Placeholder for Open FX Screenshot</div></div>`
             },
             generators: {
                 title: "Using Generators",
                 description: "Generators create visual elements from scratch. Find them under 'Effects' > 'Generators'. Drag a 'Solid Color' or 'Gradient' to the timeline to create backgrounds or colored layers.",
-                visual: `<div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden flex items-center justify-center"><div class="text-white">Placeholder for Generators Screenshot</div></div>`
+                visual: `<div class="w-full relative bg-black rounded-lg flex items-center justify-center visual-container"><div class="text-white">Placeholder for Generators Screenshot</div></div>`
             }
         };
 
@@ -79,14 +102,14 @@
                         <div class="bg-gray-900/40 rounded-lg p-4 mb-4">
                             <p class="text-gray-300 text-xs md:text-sm leading-relaxed">${step.description}</p>
                         </div>
-                        <div class="bg-gray-900/40 rounded-lg relative overflow-hidden">${step.visual}</div>
+                        <div class="bg-gray-900/40 rounded-lg relative overflow-auto">${step.visual}</div>
                     </div>
                 </div>`;
             document.querySelectorAll('.step-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.step === stepKey));
         }
 
         function initialize() {
-            const stepOrder = ['inspector', 'transitions', 'open_fx', 'generators'];
+            const stepOrder = ['inspector', 'scaling_positioning', 'transitions', 'open_fx', 'generators'];
             stepOrder.forEach(key => {
                 const data = tutorialData[key];
                 const button = document.createElement('button');
@@ -103,4 +126,5 @@
     </script>
 </body>
 </html>
+
 
