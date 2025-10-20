@@ -36,7 +36,17 @@
             backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .aspect-16-9 { aspect-ratio: 16 / 9; }
+        
+        .visual-container {
+            min-height: 300px;
+            overflow: auto;
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            .visual-container {
+                min-height: 0;
+                aspect-ratio: 16 / 9;
+            }
+        }
     </style>
 </head>
 <body class="text-white">
@@ -44,7 +54,10 @@
     <header class="p-4 text-center border-b border-gray-700 shadow-lg flex-shrink-0">
         <h1 class="text-2xl md:text-3xl font-bold tracking-wider">The Editor's Toolkit (Part 2)</h1>
         <p class="text-sm md:text-base text-gray-400 mt-1">A Deep Dive into the Edit Page</p>
-        <a href="getting_started_with_davinci_resolve.html" class="text-sm text-blue-400 hover:text-blue-300 transition-colors mt-2 block"><strong class="font-semibold">← Go back to Part 1: Getting Started</strong></a>
+        <div class="flex justify-center space-x-8 mt-2">
+            <a href="davinci-gem-part1.html" class="text-sm text-blue-400 hover:text-blue-300 transition-colors"><strong class="font-semibold">← Go back to Part 1</strong></a>
+            <a href="davinci-gem-part3.html" class="text-sm text-blue-400 hover:text-blue-300 transition-colors"><strong class="font-semibold">Go to Part 3 →</strong></a>
+        </div>
     </header>
 
     <div class="flex-grow flex flex-col md:flex-row overflow-hidden">
@@ -68,12 +81,14 @@
                 title: "Navigating Between Pages",
                 description: "Quickly switch between workspaces using the Page Navigation bar at the bottom, or use keyboard shortcuts for even faster access.",
                 visual: `
-                    <div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden p-4 text-center flex flex-col justify-center">
-                        <div class="font-bold mb-4">3 Ways to Switch Pages</div>
-                        <div class="space-y-4 text-sm md:text-base">
-                            <div class="bg-gray-700 p-3 rounded-md"><strong>1. Click the Icons:</strong> Use the navigation bar at the bottom of the screen.</div>
-                            <div class="bg-gray-700 p-3 rounded-md"><strong>2. Keyboard Shortcuts:</strong> Press Shift + [Number] (e.g., Shift+4 for Edit, Shift+5 for Fusion).</div>
-                            <div class="bg-gray-700 p-3 rounded-md"><strong>3. Top Menu:</strong> Go to Workspace > Switch to Page > [Page Name].</div>
+                    <div class="w-full relative bg-black rounded-lg flex items-center justify-center p-4 visual-container">
+                        <div class="text-center">
+                            <div class="font-bold mb-4">3 Ways to Switch Pages</div>
+                            <div class="space-y-4 text-sm md:text-base">
+                                <div class="bg-gray-700 p-3 rounded-md"><strong>1. Click the Icons:</strong> Use the navigation bar at the bottom of the screen.</div>
+                                <div class="bg-gray-700 p-3 rounded-md"><strong>2. Keyboard Shortcuts:</strong> Press Shift + [Number] (e.g., Shift+4 for Edit, Shift+5 for Fusion).</div>
+                                <div class="bg-gray-700 p-3 rounded-md"><strong>3. Top Menu:</strong> Go to Workspace > Switch to Page > [Page Name].</div>
+                            </div>
                         </div>
                     </div>`
             },
@@ -81,9 +96,9 @@
                 title: "Advanced Trimming",
                 description: "Master the different trim tools to edit with precision. Each tool affects the timeline in a unique way, saving you time and effort.",
                 visual: `
-                    <div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden p-4">
+                    <div class="w-full relative bg-black rounded-lg flex flex-col items-center justify-center p-4 visual-container">
                         <div class="text-center font-bold mb-4">Trim Tool Functions</div>
-                        <div class="grid grid-cols-2 gap-4 text-xs text-center">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-center w-full">
                             <div class="bg-gray-700 p-2 rounded"><strong>Ripple Edit:</strong> Shortens or lengthens a clip, pushing all subsequent clips forward or backward.</div>
                             <div class="bg-gray-700 p-2 rounded"><strong>Roll Edit:</strong> Moves the edit point between two clips, making one longer and the other shorter.</div>
                             <div class="bg-gray-700 p-2 rounded"><strong>Slip Edit:</strong> Changes the start and end frames of a clip without changing its duration or position on the timeline.</div>
@@ -95,17 +110,17 @@
                 title: "Keyframing Basics",
                 description: "Animate clip properties over time using keyframes in the Inspector. A keyframe marks a point in time where a property has a specific value (e.g., position, scale).",
                 visual: `
-                    <div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden p-4">
+                    <div class="w-full relative bg-black rounded-lg flex flex-col items-center justify-center p-4 visual-container">
                         <div class="text-center font-bold mb-4">Animating with Keyframes</div>
-                        <p class="text-center text-xs">1. Move playhead to start time → Click keyframe diamond (♦) in Inspector.<br>2. Move playhead to end time → Change the property's value (a new keyframe is added automatically).</p>
-                        <div class="mt-4 bg-gray-700 p-2 rounded h-3/4 flex items-center justify-center">Diagram showing Inspector panel with 'Zoom' property keyframed.</div>
+                        <p class="text-center text-xs mb-4">1. Move playhead to start time → Click keyframe diamond (♦) in Inspector.<br>2. Move playhead to end time → Change the property's value (a new keyframe is added automatically).</p>
+                        <div class="bg-gray-700 p-2 rounded flex-grow w-full flex items-center justify-center">Diagram showing Inspector panel with 'Zoom' property keyframed.</div>
                     </div>`
             },
             working_with_titles: {
                 title: "Working with Titles",
                 description: "Add professional text to your video. Find the 'Text+' generator in the Effects library, drag it to the timeline above your video clip, and customize it in the Inspector.",
                 visual: `
-                    <div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden p-4 flex items-center justify-center">
+                    <div class="w-full relative bg-black rounded-lg flex items-center justify-center p-4 visual-container">
                        <div class="text-center">
                            <div class="font-bold mb-2">Effects Library > Titles > Text+</div>
                            <div class="text-3xl font-serif p-4 bg-white text-black rounded">Your Title Here</div>
@@ -117,7 +132,7 @@
                 title: "Compound Clips",
                 description: "Organize your timeline by grouping multiple video and audio clips into a single 'Compound Clip'. Select clips, right-click, and choose 'New Compound Clip'.",
                 visual: `
-                    <div class="w-full relative aspect-16-9 bg-black rounded-lg overflow-hidden p-4 flex flex-col items-center justify-center">
+                    <div class="w-full relative bg-black rounded-lg flex flex-col items-center justify-center p-4 visual-container">
                         <div class="text-center font-bold mb-4">Creating a Compound Clip</div>
                         <div class="flex space-x-1 mb-4">
                             <div class="w-16 h-8 bg-blue-500 rounded"></div>
@@ -145,7 +160,7 @@
                         <div class="bg-gray-900/40 rounded-lg p-4 mb-4">
                             <p class="text-gray-300 text-xs md:text-sm leading-relaxed">${step.description}</p>
                         </div>
-                        <div class="bg-gray-900/40 rounded-lg relative overflow-hidden">${step.visual}</div>
+                        <div class="bg-gray-900/40 rounded-lg relative overflow-auto">${step.visual}</div>
                     </div>
                 </div>
             `;
