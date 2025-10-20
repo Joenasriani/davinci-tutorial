@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivering Your Project (Part 6)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        html, body { height: 100%; overflow: hidden; }
+        body { font-family: 'Inter', sans-serif; background-color: #1a1a1a; display: flex; flex-direction: column; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #2c2c2c; }
+        ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
+        .content-fade-in { animation: fadeIn 0.6s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .step-btn { background-color: #374151; }
+        .step-btn.active { background-color: #4f46e5; font-weight: 600; }
+        .glassmorphic-panel { background: rgba(44, 44, 44, 0.65); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .visual-container {
+            min-height: 300px;
+            overflow: auto;
+        }
+        @media (min-width: 768px) {
+            .visual-container {
+                min-height: 0;
+                aspect-ratio: 16 / 9;
+            }
+        }
+    </style>
+</head>
+<body class="text-white">
+
+    <header class="p-4 text-center border-b border-gray-700 shadow-lg flex-shrink-0">
+        <h1 class="text-2xl md:text-3xl font-bold tracking-wider">Delivering Your Project (Part 6)</h1>
+        <p class="text-sm md:text-base text-gray-400 mt-1">Exporting and Sharing Your Final Video</p>
+        <div class="flex justify-center space-x-8 mt-2">
+            <a href="davinci-gem-part5.html" class="text-sm text-blue-400 hover:text-blue-300 transition-colors"><strong class="font-semibold">← Go back to Part 5</strong></a>
+        </div>
+    </header>
+
+    <div class="flex-grow flex flex-col md:flex-row overflow-hidden">
+        <aside class="w-full md:w-64 bg-gray-800/30 p-4 overflow-y-auto border-r border-gray-700 flex-shrink-0">
+            <h2 id="steps-title" class="text-lg font-bold mb-4 text-blue-400">Export Workflow</h2>
+            <div id="steps-navigation" class="space-y-2"></div>
+        </aside>
+        <main class="flex-grow p-4 md:p-6 overflow-y-auto">
+            <div id="content-display" class="w-full max-w-7xl mx-auto"></div>
+        </main>
+    </div>
+    
+    <script>
+        const tutorialData = {
+            render_settings: {
+                title: "Render Settings & Presets",
+                description: "The Deliver page is where you export your video. The easiest way to start is by using a preset. On the left, choose a preset like 'YouTube' or 'Vimeo'. This automatically configures the best settings for that platform.",
+                visual: `<div class="w-full relative bg-black rounded-lg flex items-center justify-center p-4 visual-container"><div class="text-white">Placeholder for Render Presets Screenshot</div></div>`
+            },
+            custom_export: {
+                title: "Custom Export: Codecs & Formats",
+                description: "For more control, use 'Custom Export'. The two most important settings are Format (the container, like .mp4 or .mov) and Codec (the compression, like H.264 or ProRes). H.264 is best for web sharing, while ProRes is for high-quality professional delivery.",
+                visual: `<div class="w-full relative bg-black rounded-lg flex items-center justify-center p-4 visual-container"><div class="text-white">Placeholder for Custom Export Screenshot</div></div>`
+            },
+            render_queue: {
+                title: "The Render Queue",
+                description: "Once you have configured your settings, click 'Add to Render Queue'. This doesn't start the export; it simply adds your video as a 'job' to a to-do list. You can add multiple jobs with different settings.",
+                visual: `<div class="w-full relative bg-black rounded-lg flex items-center justify-center p-4 visual-container"><div class="text-white">Placeholder for Render Queue Screenshot</div></div>`
+            },
+            render_all: {
+                title: "Render All",
+                description: "When you are ready to export, go to the Render Queue on the right and click 'Render All'. DaVinci Resolve will now process all the jobs in your queue and create the final video files in the location you specified.",
+                visual: `<div class="w-full relative bg-black rounded-lg flex items-center justify-center p-4 visual-container"><div class="text-white">Placeholder for Render All Screenshot</div></div>`
+            }
+        };
+
+        const contentDisplay = document.getElementById('content-display');
+        const stepsNavigation = document.getElementById('steps-navigation');
+        let currentStepKey = 'render_settings';
+
+        function updateContent(stepKey) {
+            currentStepKey = stepKey;
+            const step = tutorialData[stepKey];
+            contentDisplay.innerHTML = `
+                <div class="glassmorphic-panel rounded-2xl shadow-2xl p-6 transition-all duration-300 content-fade-in">
+                    <div class="w-full flex flex-col">
+                        <h3 class="text-xl md:text-2xl font-bold mb-2">${step.title}</h3>
+                        <div class="bg-gray-900/40 rounded-lg p-4 mb-4">
+                            <p class="text-gray-300 text-xs md:text-sm leading-relaxed">${step.description}</p>
+                        </div>
+                        <div class="bg-gray-900/40 rounded-lg relative overflow-auto">${step.visual}</div>
+                    </div>
+                </div>`;
+            document.querySelectorAll('.step-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.step === stepKey));
+        }
+
+        function initialize() {
+            const stepOrder = ['render_settings', 'custom_export', 'render_queue', 'render_all'];
+            stepOrder.forEach(key => {
+                const data = tutorialData[key];
+                const button = document.createElement('button');
+                button.className = 'step-btn w-full text-left p-3 rounded-md text-sm transition-colors duration-200 hover:bg-indigo-500';
+                button.dataset.step = key;
+                button.textContent = data.title;
+                button.onclick = () => updateContent(key);
+                stepsNavigation.appendChild(button);
+            });
+            updateContent('render_settings');
+        }
+
+        initialize();
+    </script>
+</body>
+</html>
+
