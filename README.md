@@ -39,14 +39,22 @@ The prototype is built as a static front-end learning experience using:
 - responsive layouts
 - interactive quiz logic
 
-The tutorial is divided into standalone HTML modules that link together as a sequential course.
+The tutorial is divided into standalone HTML modules that link together as a sequential course. The root `index.html` displays Part 1 inside an iframe.
 
 The project does not use a backend or application framework.
+
+## Current limitations
+
+- The tutorial demonstrates learning materials and quiz interactions in the browser; it is not a substitute for working inside DaVinci Resolve.
+- Several source files (`davinci-gem-part4.html`, `davinci-gem-part5.html`, and `davinci-gem-part6.html`) use the same page title, "Delivering Your Project (Part 6)". The module naming and sequencing should be reviewed before treating them as seven distinct lessons.
+- The final quiz is client-side; no learner accounts, server-side scoring, or accredited certification were identified in the inspected files.
+- Pages load Tailwind CSS and Google Fonts from external services and may need network access for their intended styling.
+- No application tests, production deployment audit, or DaVinci Resolve version compatibility test was run as part of this documentation update.
 
 ## Purpose
 
 This repository documents an experiment in turning instructor-led DaVinci Resolve material into an interactive browser-based learning format for students.
 
-Created by Joe Nasr.
+Credit: Joe Nasr
 
-https://joe-nasr-signals.vercel.app/
+Portfolio: https://joe-nasr-signals.vercel.app/
